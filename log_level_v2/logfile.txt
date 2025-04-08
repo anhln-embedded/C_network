@@ -1,0 +1,2 @@
+2025-04-08 14:53:42 DEBUG src/main.c:39: This is a DEBUG message written to the file.
+2025-04-08 14:53:42 ERROR src/main.c:40: This is an ERROR message written to the file.
