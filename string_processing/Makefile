@@ -1,11 +1,11 @@
-# CC := /home/ngocanh/Desktop/make/toolchain/usr/bin/arm-buildroot-linux-gnueabi-gcc
-# LIB_PATH := /home/ngocanh/Desktop/make/toolchain/usr/lib
+CC := /home/ngocanh/Desktop/make/toolchain/usr/bin/arm-buildroot-linux-gnueabi-gcc
+LIB_PATH := /home/ngocanh/Desktop/make/toolchain/usr/lib
 
-CC := gcc  
-LIB_PATH := /usr/lib
+# CC := gcc  
+# LIB_PATH := /usr/lib
 
 # Name of the file to be generated
-NAME_PROJECT := ngocanh
+NAME_PROJECT := string_processing
 PATH_OUTPUT := ./out
 
 
@@ -31,6 +31,10 @@ $(PATH_OUTPUT)/%.o: $(SRC_DIRS)/%.c $(INC_FILES)
 	@echo "Compiling $< to $@"
 	@mkdir -p $(PATH_OUTPUT)
 	LD_LIBRARY_PATH=$(LIB_PATH) $(CC) -c $< -o $@ $(CFLAGS)
+
+run: $(PATH_OUTPUT)/${NAME_PROJECT}
+	@echo "Running $<"
+	@LD_LIBRARY_PATH=$(LIB_PATH) ./$<
 
 clean:
 	@echo "Cleaning up..."
