@@ -100,43 +100,64 @@ int get_digits_from_string(const char *str, int *digits)
     return count;
 }
 
-void delete_content(char *str, char *str_out, const char *delete_content)
+int delete_content(char *str, char *str_out, const char *delete_content)
 {
     if (str == NULL || str_out == NULL || delete_content == NULL)
-        return;
-
-    const char *found = str;
-    int len = strlen(delete_content);
-    char *out_ptr = str_out;
-
-    while ((found = strstr(found, delete_content)) != NULL)
+        return -1;
+    char *pos = str;
+    char *out_pos = str_out;
+    while (*pos)
     {
-        while (str < found)
+        if (strncmp(pos, delete_content, strlen(delete_content)) == 0)
         {
-            *out_ptr++ = *str++;
+            pos += strlen(delete_content);
         }
-        str += len; // Skip the delete_content
-        found = str;
+        else
+        {
+            *out_pos++ = *pos++;
+        }
     }
-
-    // Copy the remaining part of the string
-    while (*str)
-    {
-        *out_ptr++ = *str++;
-    }
-
-    *out_ptr = '\0'; // Null-terminate the output string
+    *out_pos = '\0';
+    return 0;
 }
 
 int find_replace(char *str, const char *old, const char *replace)
 {
-    if(str == NULL || old == NULL || replace == NULL)
-        return -1;
-    char temp[1000];
-    char *pos = NULL;
-    strcpy(temp, str);
-    while(pos = strstr(temp, old) != NULL)
+    if (str == NULL || old == NULL || replace == NULL)
     {
-        
+        return -1;
     }
+    static char buffer[4096];
+    char *pos = str;
+    while ((pos = strstr(pos, old)) != NULL)
+    {
+        strncpy(buffer, str, pos - str);
+        buffer[pos - str] = '\0';
+        strcat(buffer, replace);
+        strcat(buffer, pos + strlen(old));
+        strcpy(str, buffer);
+        pos += strlen(replace);
+    }
+    return 0;
+}
+
+int insert_string(char *str, const char *insert, int position)
+{
+    if(str == NULL || insert == NULL || position < 0)
+    {
+        return -1;
+    }
+    int str_len = strlen(str);
+    int insert_len = strlen(insert);
+    if(position > str_len)
+    {
+        return -1;
+    }
+    char buffer[4096];  
+    strncpy(buffer, str, position);
+    buffer[position] = '\0';
+    strcat(buffer, insert);
+    strcat(buffer, str + position);
+    strcpy(str, buffer);
+    return 0;
 }

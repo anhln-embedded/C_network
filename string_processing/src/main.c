@@ -31,5 +31,23 @@ int main()
         printf("Digit %d: %d\n", i + 1, res[i]);
     }
     printf("find_word: %d\n", find_word(str2, "powerful"));
+    if(find_replace(str2, "powerful", "awesome") == 0)
+    {
+        printf("After find_replace: %s\n", str2);
+    }
+    else
+    {
+        printf("find_replace failed\n");
+    }
+
+    if(insert_string(str2, "Hello ", 0) == 0)
+    {
+        printf("After insert_string: %s\n", str2);
+    }
+    else
+    {
+        printf("insert_string failed\n");
+    }
+
     return 0;
 }
