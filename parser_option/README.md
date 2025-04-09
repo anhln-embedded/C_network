@@ -14,5 +14,14 @@ Hiểu và sử dụng:
 
 ## 💡 Cú pháp hàm `main` có đối số
 
+## 🧾 Mã nguồn
 ```c
-int main(int argc, char *argv[])
+#include <stdio.h>
+
+int main(int argc, char *argv[]) {
+    printf("argc = %d\n", argc);
+    for (int i = 0; i < argc; i++) {
+        printf("argv[%d] = %s\n", i, argv[i]);
+    }
+    return 0;
+}
