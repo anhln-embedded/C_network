@@ -1,15 +1,15 @@
 #include "log.h"
 
-#define MAX_CALLBACKS 32  // Maximum number of log output callbacks
+#define MAX_CALLBACKS 32 // Maximum number of log output callbacks
 
 /**
  * @brief Struct to hold a log callback, its user data, and level filter.
  */
 typedef struct
 {
-    LogCallback fn;   /**< Callback function */
-    void *udata;      /**< User-defined data */
-    int level;        /**< Minimum level this callback will handle */
+    LogCallback fn; /**< Callback function */
+    void *udata;    /**< User-defined data */
+    int level;      /**< Minimum level this callback will handle */
 } Callback;
 
 /**
@@ -17,10 +17,10 @@ typedef struct
  */
 static struct
 {
-    void *udata;                     /**< User-defined data for lock function */
-    LogLockFn lock;                 /**< Lock function for thread safety */
-    int level;                      /**< Minimum level to log */
-    bool quiet;                     /**< If true, suppresses stdout logging */
+    void *udata;                       /**< User-defined data for lock function */
+    LogLockFn lock;                    /**< Lock function for thread safety */
+    int level;                         /**< Minimum level to log */
+    bool quiet;                        /**< If true, suppresses stdout logging */
     Callback callbacks[MAX_CALLBACKS]; /**< Registered log callbacks */
 } L;
 
@@ -28,8 +28,7 @@ static struct
  * @brief String representations of log levels.
  */
 static const char *level_strings[] = {
-    "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
-};
+    "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"};
 
 /**
  * @brief ANSI color codes for each log level (if enabled).
@@ -45,8 +44,7 @@ static const char *level_colors[] = {
 };
 #else
 static const char *level_colors[] = {
-    "", "", "", "", "", ""
-};
+    "", "", "", "", "", ""};
 #endif
 
 /**
@@ -142,7 +140,8 @@ void log_set_quiet(bool enable)
  */
 int log_add_callback(LogCallback fn, void *udata, int level)
 {
-    for (int i = 0; i < MAX_CALLBACKS; i++)
+    int i;
+    for (i = 0; i < MAX_CALLBACKS; i++)
     {
         if (!L.callbacks[i].fn)
         {
@@ -193,8 +192,7 @@ void log_log(LogLevel level, const char *file, int line, const char *fmt, ...)
         .fmt = fmt,
         .file = file,
         .line = line,
-        .level = level
-    };
+        .level = level};
 
     lock();
 
@@ -208,7 +206,8 @@ void log_log(LogLevel level, const char *file, int line, const char *fmt, ...)
     }
 
     // Log to each registered callback
-    for (int i = 0; i < MAX_CALLBACKS && L.callbacks[i].fn; i++)
+    int i;
+    for (i = 0; i < MAX_CALLBACKS && L.callbacks[i].fn; i++)
     {
         if (level >= L.callbacks[i].level)
         {

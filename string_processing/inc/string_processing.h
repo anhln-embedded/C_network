@@ -19,7 +19,7 @@ int get_digits_from_string(const char *str, int *digits);
 int find_word(const char *str, const char *word);
 
 void delete_content(char *str, char *str_out, const char *delete_content);
-
+void find_replace(char *str, const char *old, const char *replace);
  #endif
  
  /********************************* END OF FILE ********************************/

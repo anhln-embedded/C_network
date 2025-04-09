@@ -127,3 +127,16 @@ void delete_content(char *str, char *str_out, const char *delete_content)
 
     *out_ptr = '\0'; // Null-terminate the output string
 }
+
+int find_replace(char *str, const char *old, const char *replace)
+{
+    if(str == NULL || old == NULL || replace == NULL)
+        return -1;
+    char temp[1000];
+    char *pos = NULL;
+    strcpy(temp, str);
+    while(pos = strstr(temp, old) != NULL)
+    {
+        
+    }
+}

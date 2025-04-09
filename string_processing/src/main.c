@@ -25,7 +25,8 @@ int main()
     printf("Number of words in str2: %d\n", count_find_word(str2, "powerful"));
     printf("Number of chars in str3: %d\n", count_find_word(str3, "i"));
     int number_of_digits = get_digits_from_string(str2, res);
-    for (int i = 0; i < number_of_digits; i++)
+    int i;
+    for (i = 0; i < number_of_digits; i++)
     {
         printf("Digit %d: %d\n", i + 1, res[i]);
     }
