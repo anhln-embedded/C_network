@@ -5,7 +5,7 @@ CC := gcc
 LIB_PATH := /usr/lib
 
 # Name of the file to be generated
-NAME_PROJECT := read_fat
+NAME_PROJECT := readFile
 PATH_OUTPUT := ./out
 
 
