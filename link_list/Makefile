@@ -5,7 +5,7 @@ CC := gcc
 LIB_PATH := /usr/lib
 
 # Name of the file to be generated
-NAME_PROJECT := struct_and_union
+NAME_PROJECT := link_list
 PATH_OUTPUT := ./out
 
 
