@@ -36,20 +36,25 @@ Linkest list sẽ lưu trữ các phần tử gọi là node gồm 2 thành ph�
 ## 2.1 Tạo ra 1 node trong linkest list
 Đầu tiên ta tạo 1 struct để lưu trữ các thành phần của 1 node
 ```bash
-typedef struct Node
+typedef struct Node_t
 {
-    struct Node *next; //địa chỉ của node tiếp theo
-    int val;           //giá trị của node
-}Node;
+    int data;
+    struct Node *next;
+} Node_t;
 ```
 Tiếp theo ta sẽ có hàm để có hàm để khởi tạo 1 node
 ```bash
-Node *CreateNode(int val)
+Node_t *createNode(int data)
 {
-    Node *node = (Node *)malloc(sizeof(Node)); // cấp phát memory cho node
-    node->next = NULL; //địa chỉ tiếp theo mặc định là null
-    node->val = val;
-    return node;
+    Node_t *new_node = (Node_t *)malloc(sizeof(Node_t));
+    if (new_node == NULL)
+    {
+        printf("Memory allocation failed\n");
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
 }
 ```
 Trong chương trình chính ta tạo ra 1 node như sau
@@ -65,14 +70,6 @@ int main(){
 <img src = "https://github.com/user-attachments/assets/fc708b45-eb34-4bd0-bced-b219a5705fa5" width = "300" height = "100">
 
 ## 2.2 Thêm node vào linkest list
-Truóc khi thao tác với 1 linkest list ta sẽ phải có 1 hàm để kiểm tra trạng thái của nó
-```bash
-bool empty(Node *head)
-{
-    return (head == NULL) ? true : false;
-}
-```
-
 ### a) Thêm node vào đầu list
 <p align = "center">
 <img src = "https://github.com/user-attachments/assets/6515b7a4-8051-48aa-b43f-e90f9545d411" width = "500" height = "200">
@@ -86,18 +83,14 @@ bool empty(Node *head)
 + Cuối cùng ta cập nhật địa chỉ của node mới tạo thành địa chỉ ban đầu của list __(tương tự trường hợp nếu list không có node nào)__
 
 ```bash
-void push_front(Node **head, int value)
+void push_front(Node_t **head, int data)
 {
-    Node *node = CreateNode(value);
-    if (empty(*head))
+    Node_t *new_node = createNode(data);
+    if (*head != NULL)
     {
-        *head = node; //gán địa chỉ đầu cho linkest list
+        new_node->next = *head;
     }
-    else
-    {
-        node->next = *head; // update address of previous head
-        *head = node;       // update address of new node as the front node
-    }
+    *head = new_node;
 }
 ```
 ### b) Thêm vào cuối list
@@ -110,26 +103,25 @@ void push_front(Node **head, int value)
 + Nếu node hiện tại trỏ đến null, thì tiến hành liên kết với node đã tạo
 
 ```bash
-void push_back(Node **head, int value)
+void push_back(Node_t **head, int data)
 {
-    Node *current = *head; // use temp pointer to store address of first node in linkest likst
-    Node *node = CreateNode(value);
-    // if no node is created then assign address of node node to list
-    if (empty(current))
+    Node_t *new_node = createNode(data);
+    Node_t *current_node = *head;
+    if (*head == NULL)
     {
-        *head = node;
+        *head = new_node;
     }
     else
     {
-        // loop through every node untill reaches the last one
-        while (current->next != NULL)
+        while (current_node->next != NULL)
         {
-            current = current->next; // move to next node
-        } 
-        current->next = node; //update final node
-	node->next = NULL;
+            current_node = current_node->next;
+        }
+        current_node->next = new_node;
+        new_node->next = NULL;
     }
 }
+
 ```
 ### c) Thêm 1 node vào vị trí bất kỳ trong list
 
@@ -142,57 +134,37 @@ void push_back(Node **head, int value)
 + Trong trường hợp đã lắp qua hết các phần tử mà không tìm thấy vị trí cần thêm vào thì dừng việc xử lý
 
 ```bash
- void insert(Node **head, int value, int position)
+void insert(Node_t **head, int data, int position)
 {
-    // Tạo node mới
-    Node *node = CreateNode(value);
-
-    // Trường hợp chèn vào vị trí đầu (position == 0)
+    Node_t *new_node = createNode(data);
     if (position == 0)
     {
-        node->next = *head;
-        *head = node;
-        return;
+        new_node->next = *head;
+        *head = new_node;
     }
     else
     {
-        Node *current = *head;
+        Node_t *current_node = *head;
         int index = 0;
-        while (current != NULL && index < position - 1)
+        while (current_node != NULL && index < position - 1)
         {
-            current = current->next;
+            current_node = current_node->next;
             index++;
         }
-
-        // Kiểm tra nếu vị trí hợp lệ
-        if (current == NULL)
+        if (current_node != NULL)
         {
-            printf("không tìm thấy node tại vị trí %d\n", position);
-            return;
+            new_node->next = current_node->next;
+            current_node->next = new_node;
         }
         else
         {
-            //chèn node tại vị trí mong muốn
-            node->next = current->next;
-            current->next = node;
+            printf("Error Position\n");
+            free(new_node);
         }
     }
 }
 ```
 ## 2.3 Xóa node khỏi linkest list
-Ta sẽ có 1 macro để kiểm tra 1 linkest list có rỗng không trước khi thực hiện xóa như sau 
-```bash
-#define CHECK_EMPTY_LIST(head)                  \
-    do                                          \
-    {                                           \
-        if (empty(head))                        \
-        {                                       \
-            printf("no node in linked list\n"); \
-            return;                             \
-        }                                       \
-    } while (0)
-
-```
 ### a) Xóa node đầu của list
 
 <p align = "center">
@@ -205,14 +177,19 @@ __Bước 2:__ Ta cập nhật địa chỉ node đầu là node tiếp theo
 __Bước 3:__ Ta giải phóng node đầu đã lưu vào con trỏ tạm trước đó
 
 ```bash
- void pop_front(Node **head)
+void pop_front(Node_t **head)
 {
-    CHECK_EMPTY_LIST(*head);
-    // use temp to store first node
-    Node *first_node = *head;
-    // move to address of second node
-    *head = (*head)->next;
-    free(first_node);
+    if (*head == NULL)
+    {
+        printf("List is empty\n");
+        return;
+    }
+    else
+    {
+        Node_t *tmep = *head;
+        *head = (*head)->next;
+        free(tmep);
+    }
 }
 ```
 ### b) Xóa node cuối cùng của list
@@ -231,21 +208,27 @@ __Bước 3:__ giải phóng con trỏ lưu node này (cũng là node cuối)
 __Bước 4:__ cập nhật địa chỉ next là null 
 
 ```bash
-void pop_back(Node **head)
+void pop_back(Node_t **head)
 {
-    CHECK_EMPTY_LIST(*head);
-    Node *current = *head;
-    if (current->next == NULL)
+    Node_t *current_node = *head;
+    if (current_node == NULL)
+    {
+        printf("List is empty\n");
+        return;
+    }
+    else if (current_node->next == NULL)
+    {
         pop_front(head);
+    }
     else
     {
-        while (current->next->next != NULL)
+        while (current_node->next != NULL)
         {
-            current = current->next;
+            current_node = current_node->next;
         }
-        Node *final_node = current->next; // save final node
-        free(final_node);
-        current->next = NULL; // update next address is null
+        Node_t *temp = current_node->next;
+        current_node->next = NULL;
+        free(temp);
     }
 }
 ```
@@ -267,20 +250,19 @@ __+ Bước 5:__ ta lặp lại bước 2 cho đến khi lặp qua hết tất c
 __+ Bước 6:__ ta gán con trỏ đến node đầu là NULL
 
 ```bash
-void free_list(Node **head)
-{
-    CHECK_EMPTY_LIST(*head);
-    Node *current = *head;
-    Node *next;
-    while (current != NULL)
-    {
-        next = current->next;
-        free(current);
-        current = next;
-    }
-    *head = NULL;
-}
 
+void free_list(Node_t **heed)
+{
+    Node_t *current_node = *heed;
+    Node_t *temp = NULL;
+    while (current_node != NULL)
+    {
+        temp = current_node;
+        current_node = current_node->next;
+        free(temp);
+    }
+    *heed = NULL;
+}
 ```
 
 ### d) Xóa node ở vị trí cho trước 
@@ -295,31 +277,32 @@ void free_list(Node **head)
 + tiến hành xóa __temp__
 
 ```bash
- void delete_list(Node **head, int position)
+void delete_list(Node_t **heed, int position)
 {
-    if (position == 0)
+    Node_t *current_node = *heed;
+    Node_t *temp = NULL;
+    while (current_node != NULL && position > 0)
     {
-        pop_front(head);
+        temp = current_node;
+        current_node = current_node->next;
+        position--;
     }
-    // dùng current lặp qua từng node cho đến vị trí muốn xóa
-    Node *current = *head;
-    int index = 0;
-    while (current != NULL && index < position - 1)
+    if (current_node == NULL)
     {
-        current = current->next;
-        index++;
+        printf("Error Position\n");
+        return;
     }
-    if (current->next == NULL)
+    if (temp == NULL)
     {
-        printf("no node at position %d\n", position);
+        *heed = current_node->next;
     }
     else
     {
-        Node *temp = current;
-        current->next = current->next->next;
-        current = current->next;
-        free(temp);
+        temp->next = current_node->next;
     }
+    free(current_node);
+    current_node = NULL;
+    temp = NULL;            
 }
 ```
 
@@ -328,30 +311,30 @@ void free_list(Node **head)
 ### a) Lấy ra node đầu và cuối list
 
 ```bash
-int front(Node *head)
+
+int front(Node_t *head)
 {
-    if (empty(head))
-        printf("no node in linkest list\n");
-    else
+    if (head == NULL)
     {
-        int front = head->val;
-        return front;
+        printf("List is empty\n");
+        return -1;
     }
+    return head->data;
 }
-int back(Node *head)
+
+int back(Node_t *head)
 {
-    if (empty(head))
-        printf("no node in linkest list\n");
-    else
+    if (head == NULL)
     {
-        Node *current = head;
-        while (current->next != NULL)
-        {
-            current = current->next;
-        }
-        int back = current->val;
-        return back;
+        printf("List is empty\n");
+        return -1;
     }
+    Node_t *current_node = head;
+    while (current_node->next != NULL)
+    {
+        current_node = current_node->next;
+    }
+    return current_node->data;
 }
 ```
 
@@ -388,3 +371,82 @@ int get_postion(Node *head, int position)
 }
 ```
 
+## 2.5 Sắp xếp linkest list
+
+Để sắp xếp danh sách liên kết, ta có thể sử dụng thuật toán sắp xếp nổi bọt (Bubble Sort). Dưới đây là cách triển khai:
+
+```c
+void sort_list(Node_t **head)
+{
+    if (*head == NULL || (*head)->next == NULL)
+    {
+        return; // Danh sách rỗng hoặc chỉ có một phần tử
+    }
+
+    Node_t *current, *next_node;
+    int temp_data;
+    int swapped;
+
+    do
+    {
+        swapped = 0;
+        current = *head;
+
+        while (current->next != NULL)
+        {
+            next_node = current->next;
+
+            if (current->data > next_node->data)
+            {
+                // Hoán đổi giá trị của hai node
+                temp_data = current->data;
+                current->data = next_node->data;
+                next_node->data = temp_data;
+
+                swapped = 1;
+            }
+
+            current = current->next;
+        }
+    } while (swapped);
+}
+```
+
+### Giải thích:
+1. **Kiểm tra danh sách rỗng hoặc chỉ có một phần tử**: Nếu đúng, không cần sắp xếp.
+2. **Sử dụng vòng lặp do-while**: Tiếp tục lặp cho đến khi không còn hoán đổi nào xảy ra.
+3. **So sánh và hoán đổi giá trị**: Nếu giá trị của node hiện tại lớn hơn giá trị của node tiếp theo, hoán đổi chúng.
+4. **Kết thúc khi danh sách đã được sắp xếp**.
+
+### Ví dụ sử dụng:
+```c
+int main()
+{
+    Node_t *head = NULL;
+
+    push_back(&head, 5);
+    push_back(&head, 3);
+    push_back(&head, 8);
+    push_back(&head, 1);
+
+    printf("Danh sách trước khi sắp xếp:\n");
+    print_list(head);
+
+    sort_list(&head);
+
+    printf("Danh sách sau khi sắp xếp:\n");
+    print_list(head);
+
+    free_list(&head);
+    return 0;
+}
+```
+
+### Kết quả:
+```
+Danh sách trước khi sắp xếp:
+5 -> 3 -> 8 -> 1 -> NULL
+
+Danh sách sau khi sắp xếp:
+1 -> 3 -> 5 -> 8 -> NULL
+```

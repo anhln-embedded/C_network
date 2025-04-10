@@ -98,7 +98,8 @@ void pop_front(Node_t **head)
 void pop_back(Node_t **head)
 {
     Node_t *current_node = *head;
-    if (current_node == NULL)
+    Node_t *prev_node = *head;
+    if (*head == NULL)
     {
         printf("List is empty\n");
         return;
@@ -109,26 +110,144 @@ void pop_back(Node_t **head)
     }
     else
     {
-        while (current_node->next != NULL)
+        while(current_node->next != NULL)
         {
+            prev_node = current_node;
             current_node = current_node->next;
         }
-        Node_t *temp = current_node->next;
-        current_node->next = NULL;
-        free(temp);
+        prev_node->next = NULL;
+        free(current_node);
+        current_node = NULL;
+        prev_node = NULL;
     }
 }
 
 void delete_list(Node_t **heed, int position)
 {
-    
+    Node_t *current_node = *heed;
+    Node_t *temp = NULL;
+    while (current_node != NULL && position > 0)
+    {
+        temp = current_node;
+        current_node = current_node->next;
+        position--;
+    }
+    if (current_node == NULL)
+    {
+        printf("Error Position\n");
+        return;
+    }
+    if (temp == NULL)
+    {
+        *heed = current_node->next;
+    }
+    else
+    {
+        temp->next = current_node->next;
+    }
+    free(current_node);
+    current_node = NULL;
+    temp = NULL;            
 }
 void free_list(Node_t **heed)
 {
+    Node_t *current_node = *heed;
+    Node_t *temp = NULL;
+    while (current_node != NULL)
+    {
+        temp = current_node;
+        current_node = current_node->next;
+        free(temp);
+    }
+    *heed = NULL;
 }
+
+void display_list(Node_t *head)
+{
+    Node_t *current_node = head;
+    while (current_node != NULL)
+    {
+        printf("%d -> ", current_node->data);
+        current_node = current_node->next;
+    }
+    printf("NULL\n");
+}
+
+int front(Node_t *head)
+{
+    if (head == NULL)
+    {
+        printf("List is empty\n");
+        return -1;
+    }
+    return head->data;
+}
+
+int back(Node_t *head)
+{
+    if (head == NULL)
+    {
+        printf("List is empty\n");
+        return -1;
+    }
+    Node_t *current_node = head;
+    while (current_node->next != NULL)
+    {
+        current_node = current_node->next;
+    }
+    return current_node->data;
+}
+
+void sort_list(Node_t **head)
+{
+    Node_t *current_node = *head;
+    Node_t *next_node = NULL;
+    int temp;
+    if (*head == NULL)
+    {
+        return;
+    }
+    while (current_node != NULL)
+    {
+        next_node = current_node->next;
+        while (next_node != NULL)
+        {
+            if (current_node->data > next_node->data)
+            {
+                temp = current_node->data;
+                current_node->data = next_node->data;
+                next_node->data = temp;
+            }
+            next_node = next_node->next;
+        }
+        current_node = current_node->next;
+    }
+}
+void reverse_list(Node_t **head)
+{
+    Node_t *prev = NULL;
+    Node_t *current = *head;
+    Node_t *next = NULL;
+    while (current != NULL)
+    {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    *head = prev;
+}
+
+
 
 int main()
 {
     Node_t *head = createNode(23);
+    push_front(&head, 12);
+    push_back(&head, 45);
+    insert(&head, 34, 1);
+    display_list(head);
+    sort_list(&head);
+    display_list(head);
     return 0;
 }
