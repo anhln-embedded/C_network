@@ -1,158 +1,120 @@
-#include "log.h"
+#include <log.h>
+#include <pthread.h>
 
-#define MAX_CALLBACKS 32
+static log_config_t logger_config = {
+    .log_config_level = LOG_LVL_DEBUG,
+    .log_config_type = LOG_STDOUT,
+    .log_config_file = "application.log"};
 
-typedef struct
-{
-    log_LogFn fn;
-    void *udata;
-    int level;
-} Callback;
-
-static struct
-{
-    void *udata;
-    log_LockFn lock;
-    int level;
-    bool quiet;
-    Callback callbacks[MAX_CALLBACKS];
-} L;
-
-static const char *level_strings[] = {
-    "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"};
+const char *log_level_names[] = {
+    "NONE",
+    "ERROR",
+    "WARN",
+    "DEBUG"};
 
 #ifdef LOG_USE_COLOR
-static const char *level_colors[] = {
-    "\x1b[94m", "\x1b[36m", "\x1b[32m", "\x1b[33m", "\x1b[31m", "\x1b[35m"};
-#endif
 
-static void stdout_callback(log_Event *ev)
-{
-    char buf[16];
-    buf[strftime(buf, sizeof(buf), "%H:%M:%S", ev->time)] = '\0';
-#ifdef LOG_USE_COLOR
-    fprintf(
-        ev->udata, "%s %s%-5s\x1b[0m \x1b[90m%s:%d:\x1b[0m ",
-        buf, level_colors[ev->level], level_strings[ev->level],
-        ev->file, ev->line);
+const char *log_level_colors[] = {
+    "\033[0;37m", // NONE - white
+    "\033[0;31m", // ERROR - red
+    "\033[0;33m", // WARN - yellow
+    "\033[0;34m"  // DEBUG - blue
+};
+
 #else
-    fprintf(
-        ev->udata, "%s %-5s %s:%d: ",
-        buf, level_strings[ev->level], ev->file, ev->line);
+
+const char *log_level_colors[] = {
+    "", // NONE - no color
+    "", // ERROR - no color
+    "", // WARN - no color
+    ""  // DEBUG - no color
+};
 #endif
-    vfprintf(ev->udata, ev->fmt, ev->ap);
-    fprintf(ev->udata, "\n");
-    fflush(ev->udata);
-}
 
-static void file_callback(log_Event *ev)
+void log_init(log_config_t *config)
 {
-    char buf[64];
-    buf[strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", ev->time)] = '\0';
-    fprintf(
-        ev->udata, "%s %-5s %s:%d: ",
-        buf, level_strings[ev->level], ev->file, ev->line);
-    vfprintf(ev->udata, ev->fmt, ev->ap);
-    fprintf(ev->udata, "\n");
-    fflush(ev->udata);
-}
-
-static void lock(void)
-{
-    if (L.lock)
+    if (config != NULL)
     {
-        L.lock(true, L.udata);
+        logger_config = *config;
     }
 }
-
-static void unlock(void)
+void log_cleanup(void)
 {
-    if (L.lock)
+    if (logger_config.log_config_type == LOG_FILE)
     {
-        L.lock(false, L.udata);
-    }
-}
-
-const char *log_level_string(int level)
-{
-    return level_strings[level];
-}
-
-void log_set_lock(log_LockFn fn, void *udata)
-{
-    L.lock = fn;
-    L.udata = udata;
-}
-
-void log_set_level(int level)
-{
-    L.level = level;
-}
-
-void log_set_quiet(bool enable)
-{
-    L.quiet = enable;
-}
-
-int log_add_callback(log_LogFn fn, void *udata, int level)
-{
-    int i;
-    for (i = 0; i < MAX_CALLBACKS; i++)
-    {
-        if (!L.callbacks[i].fn)
+        FILE *file = fopen(logger_config.log_config_file, "w");
+        if (file != NULL)
         {
-            L.callbacks[i] = (Callback){fn, udata, level};
-            return 0;
+            fclose(file);
         }
     }
-    return -1;
 }
-
-int log_add_fp(FILE *fp, int level)
+void log_set_level(log_level_t level)
 {
-    return log_add_callback(file_callback, fp, level);
-}
-
-static void init_event(log_Event *ev, void *udata)
-{
-    if (!ev->time)
+    if (level <= LOG_LVL_NONE)
     {
-        time_t t = time(NULL);
-        ev->time = localtime(&t);
+        logger_config.log_config_level = LOG_LVL_NONE;
     }
-    ev->udata = udata;
-}
-
-void log_log(int level, const char *file, int line, const char *fmt, ...)
-{
-    log_Event ev = {
-        .fmt = fmt,
-        .file = file,
-        .line = line,
-        .level = level,
-    };
-
-    lock();
-
-    if (!L.quiet && level >= L.level)
+    else if (level >= LOG_LVL_DEBUG)
     {
-        init_event(&ev, stderr);
-        va_start(ev.ap, fmt);
-        stdout_callback(&ev);
-        va_end(ev.ap);
+        logger_config.log_config_level = LOG_LVL_DEBUG;
     }
-    int i;
-    for (i = 0; i < MAX_CALLBACKS && L.callbacks[i].fn; i++)
+    else
     {
-        Callback *cb = &L.callbacks[i];
-        if (level >= cb->level)
+        logger_config.log_config_level = level;
+    }
+}
+void log_set_file(const char *file_path)
+{
+    if (file_path != NULL)
+    {
+        snprintf(logger_config.log_config_file, sizeof(logger_config.log_config_file), "%s", file_path);
+    }
+}
+void log_log(log_level_t level, const char *fmt, ...)
+{
+    if (level > logger_config.log_config_level)
+    {
+        return;
+    }
+    va_list args;
+    va_start(args, fmt);
+    char log_line[MAX_LOG_LINE_SIZE];
+    time_t now = time(NULL);
+    struct tm *tm_info = localtime(&now);
+    strftime(log_line, sizeof(log_line), "%Y-%m-%d %H:%M:%S", tm_info);
+    char log_message[MAX_LOG_LINE_SIZE];
+    vsnprintf(log_message, sizeof(log_message), fmt, args);
+    va_end(args);
+
+    static pthread_mutex_t log_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+    pthread_mutex_lock(&log_mutex);
+
+    if (logger_config.log_config_type == LOG_STDOUT)
+    {
+        fprintf(stdout, "[%s] %s%s\033[0m: %s\n", log_line, log_level_colors[level], log_level_names[level], log_message);
+    }
+    else if (logger_config.log_config_type == LOG_FILE)
+    {
+        FILE *file = fopen(logger_config.log_config_file, "a");
+        if (file != NULL)
         {
-            init_event(&ev, cb->udata);
-            va_start(ev.ap, fmt);
-            cb->fn(&ev);
-            va_end(ev.ap);
+            fprintf(file, "[%s] %s: %s\n", log_line, log_level_names[level], log_message);
+            fclose(file);
+        }
+        else
+        {
+            fprintf(stderr, "Failed to open log file: %s\n", logger_config.log_config_file);
         }
     }
-
-    unlock();
+    else if (logger_config.log_config_type == LOG_SYSLOG)
+    {
+        fprintf(stderr, "Syslog logging not implemented\n");
+    }
+    else
+    {
+        fprintf(stderr, "Unknown log type: %d\n", logger_config.log_config_type);
+    }
+    pthread_mutex_unlock(&log_mutex);
 }

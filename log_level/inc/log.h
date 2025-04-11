@@ -14,9 +14,16 @@
 #include <stdbool.h>
 #include <time.h>
 
-#define LOG_VERSION "0.1.0"
-#define LOG_USE_COLOR 
-// #undef  LOG_USE_COLOR
+#define MAX_LOG_LINE_SIZE 2048
+#define LOG_USE_COLOR
+
+typedef enum
+{
+    LOG_LVL_NONE = 0,
+    LOG_LVL_ERROR,
+    LOG_LVL_WARN,
+    LOG_LVL_DEBUG
+} log_level_t;
 
 typedef struct
 {
@@ -27,36 +34,34 @@ typedef struct
     void *udata;
     int line;
     int level;
-} log_Event;
+} log_event_t;
 
-typedef void (*log_LogFn)(log_Event *ev);
-typedef void (*log_LockFn)(bool lock, void *udata);
-
-enum
+typedef enum
 {
-    LOG_TRACE,
-    LOG_DEBUG,
-    LOG_INFO,
-    LOG_WARN,
-    LOG_ERROR,
-    LOG_FATAL
-};
+    LOG_STDOUT,
+    LOG_FILE,
+    LOG_SYSLOG,
+} log_type_t;
 
-#define log_trace(...) log_log(LOG_TRACE, __FILE__, __LINE__, __VA_ARGS__)
-#define log_debug(...) log_log(LOG_DEBUG, __FILE__, __LINE__, __VA_ARGS__)
-#define log_info(...) log_log(LOG_INFO, __FILE__, __LINE__, __VA_ARGS__)
-#define log_warn(...) log_log(LOG_WARN, __FILE__, __LINE__, __VA_ARGS__)
-#define log_error(...) log_log(LOG_ERROR, __FILE__, __LINE__, __VA_ARGS__)
-#define log_fatal(...) log_log(LOG_FATAL, __FILE__, __LINE__, __VA_ARGS__)
+typedef struct
+{
+    log_level_t log_config_level;
+    log_type_t log_config_type;
+    char log_config_file[256];
+} log_config_t;
 
-const char *log_level_string(int level);
-void log_set_lock(log_LockFn fn, void *udata);
-void log_set_level(int level);
-void log_set_quiet(bool enable);
-int log_add_callback(log_LogFn fn, void *udata, int level);
-int log_add_fp(FILE *fp, int level);
+#define log_error(fmt, ...) \
+    log_log(LOG_LVL_ERROR, fmt, ##__VA_ARGS__)
+#define log_warn(fmt, ...) \
+    log_log(LOG_LVL_WARN, fmt, ##__VA_ARGS__)
+#define log_debug(fmt, ...) \
+    log_log(LOG_LVL_DEBUG, fmt, ##__VA_ARGS__)
 
-void log_log(int level, const char *file, int line, const char *fmt, ...);
+void log_init(log_config_t *config);
+void log_cleanup(void);
+void log_set_level(log_level_t level);
+void log_set_file(const char *file_path);
+void log_log(log_level_t level, const char *fmt, ...);
 
 #endif
 

@@ -22,6 +22,16 @@ int delete_content(char *str, char *str_out, const char *delete_content);
 int find_replace(char *str, const char *old, const char *replace);
 int insert_string(char *str, const char *insert, int position);
 
+
+
+#define LN_STRCPY(dest, src) \
+    do { \
+        if (dest != NULL && src != NULL) { \
+            strncpy(dest, src, sizeof(dest)); \
+            dest[sizeof(dest) - 1] = '\0'; \
+        } \
+    } while (0)
+
 #endif
 
 /********************************* END OF FILE ********************************/

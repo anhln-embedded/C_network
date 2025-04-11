@@ -205,6 +205,9 @@ void log_log(LogLevel level, const char *file, int line, const char *fmt, ...)
         va_end(ev.ap);
     }
 
+
+    
+
     // Log to each registered callback
     int i;
     for (i = 0; i < MAX_CALLBACKS && L.callbacks[i].fn; i++)

@@ -2,12 +2,42 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+// Define the Node structure
 typedef struct Node_t
 {
     int data;
-    struct Node *next;
+    struct Node_t *next;
 } Node_t;
 
+// Function prototypes
+Node_t *createNode(int data);
+void push_front(Node_t **head, int data);
+void push_back(Node_t **head, int data);
+void insert(Node_t **head, int data, int position);
+void pop_front(Node_t **head);
+void pop_back(Node_t **head);
+void delete_list(Node_t **head, int position);
+void free_list(Node_t **head);
+void display_list(Node_t *head);
+int front(Node_t *head);
+int back(Node_t *head);
+void sort_list(Node_t **head);
+void reverse_list(Node_t **head);
+
+
+int main()
+{
+    Node_t *head = createNode(23);
+    push_front(&head, 12);
+    push_back(&head, 45);
+    insert(&head, 34, 1);
+    display_list(head);
+    sort_list(&head);
+    display_list(head);
+    return 0;
+}
+
+// Function implementations
 Node_t *createNode(int data)
 {
     Node_t *new_node = (Node_t *)malloc(sizeof(Node_t));
@@ -89,9 +119,9 @@ void pop_front(Node_t **head)
     }
     else
     {
-        Node_t *tmep = *head;
+        Node_t *temp = *head;
         *head = (*head)->next;
-        free(tmep);
+        free(temp);
     }
 }
 
@@ -236,18 +266,4 @@ void reverse_list(Node_t **head)
         current = next;
     }
     *head = prev;
-}
-
-
-
-int main()
-{
-    Node_t *head = createNode(23);
-    push_front(&head, 12);
-    push_back(&head, 45);
-    insert(&head, 34, 1);
-    display_list(head);
-    sort_list(&head);
-    display_list(head);
-    return 0;
 }
