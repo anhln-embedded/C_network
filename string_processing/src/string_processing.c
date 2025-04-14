@@ -1,10 +1,9 @@
 #include "string_processing.h"
+#include "safe_string_macros.h"
 
-#include <string.h>
-
-int count_words(const char *str)
+int string_processing_count_words(const char *str)
 {
-    if (str == NULL || strlen(str) == 0)
+    if (str == NULL || SAFE_STRLEN(str) == 0)
         return 0;
 
     int count = 0;
@@ -27,9 +26,9 @@ int count_words(const char *str)
     return count;
 }
 
-int count_digits(const char *str)
+int string_processing_count_digits(const char *str)
 {
-    if (str == NULL || strlen(str) == 0)
+    if (str == NULL || SAFE_STRLEN(str) == 0)
         return 0;
 
     int count = 0;
@@ -46,7 +45,7 @@ int count_digits(const char *str)
     return count;
 }
 
-int count_find_word(const char *str, const char *word)
+int string_processing_count_find_word(const char *str, const char *word)
 {
     if (str == NULL || word == NULL)
         return 0;
@@ -54,16 +53,16 @@ int count_find_word(const char *str, const char *word)
     int count = 0;
     const char *found = str;
 
-    while ((found = strstr(found, word)) != NULL)
+    while ((found = SAFE_STRSTR(found, word)) != NULL)
     {
         count++;
-        found += strlen(word);
+        found += SAFE_STRLEN(word);
     }
 
     return count;
 }
 
-int find_word(const char *str, const char *word)
+int string_processing_find_word(const char *str, const char *word)
 {
     if (str == NULL || word == NULL)
         return -1;
@@ -76,7 +75,7 @@ int find_word(const char *str, const char *word)
     return -1;
 }
 
-int get_digits_from_string(const char *str, int *digits)
+int string_processing_get_digits_from_string(const char *str, int *digits)
 {
     if (str == NULL || digits == NULL)
         return 0;
@@ -100,7 +99,7 @@ int get_digits_from_string(const char *str, int *digits)
     return count;
 }
 
-int delete_content(char *str, char *str_out, const char *delete_content)
+int string_processing_delete_content(char *str, char *str_out, const char *delete_content)
 {
     if (str == NULL || str_out == NULL || delete_content == NULL)
         return -1;
@@ -108,9 +107,10 @@ int delete_content(char *str, char *str_out, const char *delete_content)
     char *out_pos = str_out;
     while (*pos)
     {
-        if (strncmp(pos, delete_content, strlen(delete_content)) == 0)
+
+        if(SAFE_STRNCMP(pos, delete_content, strlen(delete_content)) == 0)
         {
-            pos += strlen(delete_content);
+            pos += SAFE_STRLEN(delete_content);
         }
         else
         {
@@ -121,7 +121,7 @@ int delete_content(char *str, char *str_out, const char *delete_content)
     return 0;
 }
 
-int find_replace(char *str, const char *old, const char *replace)
+int string_processing_find_replace(char *str, const char *old, const char *replace)
 {
     if (str == NULL || old == NULL || replace == NULL)
     {
@@ -129,35 +129,36 @@ int find_replace(char *str, const char *old, const char *replace)
     }
     static char buffer[4096];
     char *pos = str;
-    while ((pos = strstr(pos, old)) != NULL)
+    while ((pos = SAFE_STRSTR(pos, old)) != NULL)
     {
-        strncpy(buffer, str, pos - str);
+        SAFE_STRNCPY(buffer, str, pos - str);
         buffer[pos - str] = '\0';
-        strcat(buffer, replace);
-        strcat(buffer, pos + strlen(old));
-        strcpy(str, buffer);
-        pos += strlen(replace);
+        SAFE_STRCAT(buffer, replace);
+        SAFE_STRCAT(buffer, pos + SAFE_STRLEN(old));
+        SAFE_STRCPY(str, buffer);
+        pos = str + (pos - str) + SAFE_STRLEN(replace);
+
     }
     return 0;
 }
 
-int insert_string(char *str, const char *insert, int position)
+int string_processing_insert_string(char *str, const char *insert, int position)
 {
     if(str == NULL || insert == NULL || position < 0)
     {
         return -1;
     }
-    int str_len = strlen(str);
-    int insert_len = strlen(insert);
+    int str_len = SAFE_STRLEN(str);
+    int insert_len = SAFE_STRLEN(insert);
     if(position > str_len)
     {
         return -1;
     }
     char buffer[4096];  
-    strncpy(buffer, str, position);
+    SAFE_STRNCPY(buffer, str, position);
     buffer[position] = '\0';
-    strcat(buffer, insert);
-    strcat(buffer, str + position);
-    strcpy(str, buffer);
+    SAFE_STRCAT(buffer, insert);
+    SAFE_STRCAT(buffer, str + position);
+    SAFE_STRCPY(str, buffer);
     return 0;
 }

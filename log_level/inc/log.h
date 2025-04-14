@@ -25,16 +25,6 @@ typedef enum
     LOG_LVL_DEBUG
 } log_level_t;
 
-typedef struct
-{
-    va_list ap;
-    const char *fmt;
-    const char *file;
-    struct tm *time;
-    void *udata;
-    int line;
-    int level;
-} log_event_t;
 
 typedef enum
 {

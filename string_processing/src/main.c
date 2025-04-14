@@ -9,7 +9,8 @@ const char *str = "Hello, World! This is a test string. Let's count the words, s
                   "This is the second paragraph. It contains more text to process.";
 
 static char str2[] = "C programming is powerful 400 and versatile. "
-                     "Another paragraph 1234 follows here with powerful more examples and details.";
+                        "It allows you to write efficient and high-performance code. ";
+    
 
 static char str3[] = "This is Ngoc Anh. ";
 
@@ -20,18 +21,18 @@ int main()
     printf("Input string:\n%s\n", str2);
     printf("size of str: %zu\n", sizeof(str));
     printf("size of str2: %zu\n", sizeof(str2));
-    printf("Number of words: %d\n", count_words(str2));
-    printf("Number of digits: %d\n", count_digits(str2));
-    printf("Number of words in str2: %d\n", count_find_word(str2, "powerful"));
-    printf("Number of chars in str3: %d\n", count_find_word(str3, "i"));
-    int number_of_digits = get_digits_from_string(str2, res);
+    printf("Number of words: %d\n", string_processing_count_words(str2));
+    printf("Number of digits: %d\n", string_processing_count_digits(str2));
+    printf("Number of words in str2: %d\n", string_processing_count_find_word(str2, "powerful"));
+    printf("Number of chars in str3: %d\n", string_processing_count_find_word(str3, "i"));
+    int number_of_digits = string_processing_get_digits_from_string(str2, res);
     int i;
     for (i = 0; i < number_of_digits; i++)
     {
         printf("Digit %d: %d\n", i + 1, res[i]);
     }
-    printf("find_word: %d\n", find_word(str2, "powerful"));
-    if(find_replace(str2, "powerful", "awesome") == 0)
+    printf("find_word: %d\n", string_processing_find_word(str2, "powerful"));
+    if(string_processing_find_replace(str2, "powerful", "awesome") == 0)
     {
         printf("After find_replace: %s\n", str2);
     }
@@ -40,7 +41,7 @@ int main()
         printf("find_replace failed\n");
     }
 
-    if(insert_string(str2, "Hello ", 0) == 0)
+    if(string_processing_insert_string(str2, "Hello ", 0) == 0)
     {
         printf("After insert_string: %s\n", str2);
     }
