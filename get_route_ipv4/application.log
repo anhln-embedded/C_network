@@ -30,3 +30,35 @@
 [2025-04-15 09:47:11] DEBUG: Parsed route is_default: false
 [2025-04-15 09:47:11] DEBUG: Route IPv4 node created
 [2025-04-15 09:47:11] DEBUG: Route IPv4 module initialized
+[2025-04-15 09:50:49] DEBUG: Opened /proc/net/route
+[2025-04-15 09:50:49] DEBUG: Parsed route line: ens33	00000000	0101A8C0	0003	0	0	100	00000000	0	0	0                                                                            
+
+[2025-04-15 09:50:49] DEBUG: Parsed route destination: 0.0.0.0
+[2025-04-15 09:50:49] DEBUG: Parsed route gateway: 192.168.1.1
+[2025-04-15 09:50:49] DEBUG: Parsed route mask: 0.0.0.0
+[2025-04-15 09:50:49] DEBUG: Parsed route is_default: true
+[2025-04-15 09:50:49] DEBUG: Route IPv4 node created
+[2025-04-15 09:50:49] DEBUG: Parsed route line: ens33	0001A8C0	00000000	0001	0	0	100	00FFFFFF	0	0	0                                                                            
+
+[2025-04-15 09:50:49] DEBUG: Parsed route destination: 192.168.1.0
+[2025-04-15 09:50:49] DEBUG: Parsed route gateway: 0.0.0.0
+[2025-04-15 09:50:49] DEBUG: Parsed route mask: 255.255.255.0
+[2025-04-15 09:50:49] DEBUG: Parsed route is_default: false
+[2025-04-15 09:50:49] DEBUG: Route IPv4 node created
+[2025-04-15 09:50:49] DEBUG: Route IPv4 module initialized
+[2025-04-15 09:54:15] DEBUG: Opened /proc/net/route
+[2025-04-15 09:54:15] DEBUG: Parsed route line: ens33	00000000	0101A8C0	0003	0	0	100	00000000	0	0	0                                                                            
+
+[2025-04-15 09:54:15] DEBUG: Parsed route destination: 0.0.0.0
+[2025-04-15 09:54:15] DEBUG: Parsed route gateway: 192.168.1.1
+[2025-04-15 09:54:15] DEBUG: Parsed route mask: 0.0.0.0
+[2025-04-15 09:54:15] DEBUG: Parsed route is_default: true
+[2025-04-15 09:54:15] DEBUG: Route IPv4 node created
+[2025-04-15 09:54:15] DEBUG: Parsed route line: ens33	0001A8C0	00000000	0001	0	0	100	00FFFFFF	0	0	0                                                                            
+
+[2025-04-15 09:54:15] DEBUG: Parsed route destination: 192.168.1.0
+[2025-04-15 09:54:15] DEBUG: Parsed route gateway: 0.0.0.0
+[2025-04-15 09:54:15] DEBUG: Parsed route mask: 255.255.255.0
+[2025-04-15 09:54:15] DEBUG: Parsed route is_default: false
+[2025-04-15 09:54:15] DEBUG: Route IPv4 node created
+[2025-04-15 09:54:15] DEBUG: Route IPv4 module initialized

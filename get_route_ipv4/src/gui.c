@@ -1,4 +1,5 @@
 #include "gui.h"
+#include "safe_string_macros.h"
 
 static route_ipv4_node_t *g_phead = NULL;
 
@@ -59,7 +60,7 @@ static void gui_display_footer(void)
 
 static void gui_printCentered(const char *str, int width)
 {
-    int len = strlen(str);
+    int len = SAFE_STRLEN(str);
     int padding = (width - len) / 2;
     printf("%*s%s%*s", padding, "", str, padding + (width - len) % 2, "");
 }
