@@ -112,14 +112,12 @@ static void route_ipv4_build(void)
             hex_to_ip(dest_hex, route.destination);
             hex_to_ip(gw_hex, route.gateway);
             hex_to_ip(mask_hex, route.mask);
-            SAFE_STRNCPY(route.iface, iface, sizeof(route.iface));
             route.is_default = (flags & 0x2) != 0;
             
             log_debug("Parsed route line: %s", line);
             log_debug("Parsed route destination: %s", route.destination);
             log_debug("Parsed route gateway: %s", route.gateway);
             log_debug("Parsed route mask: %s", route.mask);
-            log_debug("Parsed route iface: %s", route.iface);
             log_debug("Parsed route is_default: %s", route.is_default ? "true" : "false");
             link_list_push_back(route);
         }

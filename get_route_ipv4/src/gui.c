@@ -32,7 +32,6 @@ static void gui_display_header(void)
 }
 static void gui_display_route(route_ipv4_node_t *node)
 {
-    printf("Interface: %s\n", node->route.iface);
     printf("Destination: %s\n", node->route.destination);
     printf("Gateway: %s\n", node->route.gateway);
     printf("Mask: %s\n", node->route.mask);

@@ -17,7 +17,6 @@
 
 
 typedef struct{
-    char iface[16];
     char destination[16];
     char gateway[16];
     char mask[16];
