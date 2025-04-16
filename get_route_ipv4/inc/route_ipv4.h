@@ -25,6 +25,7 @@ typedef struct{
 
 typedef struct route_ipv4_node_t
 {
+    struct route_ipv4_node_t *prev;
     route_ipv4_t route;   
     struct route_ipv4_node_t *next;
 } route_ipv4_node_t;
