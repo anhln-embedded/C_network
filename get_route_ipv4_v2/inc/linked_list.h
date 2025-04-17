@@ -1,3 +1,11 @@
+/*
+ ******************************************************************************
+ * @file       log.h
+ * @author     Luu Ngoc Anh
+ * @date       04/04/2025
+ ******************************************************************************
+ */
+
 #ifndef __LINKED_LIST_H__
 #define __LINKED_LIST_H__
 
@@ -32,24 +40,11 @@ typedef struct list_head_s
     for (pos = LIST_ENTRY((head)->next, typeof(*pos), member); \
          &pos->member != (head);                               \
          pos = LIST_ENTRY(pos->member.next, typeof(*pos), member))
-
 #define LIST_FOR_EACH_ENTRY_SAFE(pos, n, head, member)          \
     for (pos = LIST_ENTRY((head)->next, typeof(*pos), member),  \
         n = LIST_ENTRY(pos->member.next, typeof(*pos), member); \
          &pos->member != (head);                                \
          pos = n, n = LIST_ENTRY(n->member.next, typeof(*n), member))
-
-static inline void
-list_add_tail(list_head_t *new, list_head_t *head) __attribute__((unused));
-static inline void
-list_del(list_head_t *entry) __attribute__((unused));
-static inline void
-list_del_init(list_head_t *entry) __attribute__((unused));
-static inline int
-list_empty(list_head_t *head) __attribute__((unused));
-static inline int
-list_count(list_head_t *head) __attribute__((unused));
-
 static inline void
 __list_add(list_head_t *new, list_head_t *prev, list_head_t *next)
 {
@@ -71,7 +66,6 @@ __list_del(list_head_t *prev, list_head_t *next)
     next->prev = prev;
     prev->next = next;
 }
-
 static inline void
 list_del(list_head_t *entry)
 {
@@ -99,15 +93,13 @@ list_count(list_head_t *head)
     list_head_t *pos;
     int ret = 0;
 
-    LIST_FOR_EACH(pos, head)
+    for (pos = (head)->next; pos != (head); pos = pos->next)
     {
         ret++;
     }
 
     return ret;
 }
-
-static inline void list_splice_tail(list_head_t *list, list_head_t *head) __attribute__((unused));
 
 static inline void
 __list_splice(list_head_t *list, list_head_t *prev, list_head_t *next)
@@ -131,29 +123,21 @@ list_splice_tail(list_head_t *list, list_head_t *head)
     }
 }
 
-static inline void list_replace_init(list_head_t *old,
-                                     list_head_t *new) __attribute__((unused));
-/**
- * list_replace - replace old entry by new one
- * @old : the element to be replaced
- * @new : the new element to insert
- *
- * If @old was empty, it will be overwritten.
- */
-static inline void list_replace(list_head_t *old,
-                                list_head_t *new)
+static inline void
+list_replace(list_head_t *old, list_head_t *new)
 {
     new->next = old->next;
     new->next->prev = new;
     new->prev = old->prev;
     new->prev->next = new;
 }
-
-static inline void list_replace_init(list_head_t *old,
-                                     list_head_t *new)
+static inline void
+list_replace_init(list_head_t *old, list_head_t *new)
 {
     list_replace(old, new);
     INIT_LIST_HEAD(old);
 }
 
 #endif /* __LINKED_LIST_H__ */
+
+/********************************* END OF FILE ********************************/
