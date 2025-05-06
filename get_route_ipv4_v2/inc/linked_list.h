@@ -70,8 +70,8 @@ static inline void
 list_del(list_head_t *entry)
 {
     __list_del(entry->prev, entry->next);
-    entry->next = (void *)0;
-    entry->prev = (void *)0;
+    entry->next = NULL;
+    entry->prev = NULL;
 }
 
 static inline void
