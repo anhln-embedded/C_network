@@ -1,0 +1,30 @@
+{
+    "name": "wan1",
+    "protocol": "ipv4/ipv6",
+    "gateway_type": "route",
+    "vlan_type": "tag",
+    "vlan_id": 11,
+    "mtu": 1492,
+    "nat": true,
+    "link_mode": "pppoe",
+    "pppoe_username": "ttcngpon",
+    "pppoe_password": "ansv",
+    "ipv4_alloc": "static",
+    "ipv4_ip": "123.16.0.100",
+    "ipv4_mask": "255.255.255.0",
+    "ipv4_gw": "123.16.0.254",
+    "ipv4_dns": [
+        "8.8.8.8",
+        "1.1.1.1"
+    ],
+    "ipv6_alloc": "dhcpv6",
+    "ipv6_gw": "2001:db8::1",
+    "ipv6_dns": [
+        "2001:4860:4860::8888",
+        "2001:4860:4860::8844"
+    ],
+    "ipv6_prefix_mode": "manual",
+    "ipv6_prefix_value": "2001:db8:abcd:12::/56",
+    "ipv6_prefix_primaryTime": "3600",
+    "ipv6_prefix_leaseTime": "7200"
+}
