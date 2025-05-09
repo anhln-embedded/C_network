@@ -7,6 +7,7 @@
 #include <arpa/inet.h>
 #include "error.h"
 #include "log.h"
+#include "safe_macros.h"
 
 
 #define MAX_STR_LEN 16

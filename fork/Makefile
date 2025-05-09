@@ -1,8 +1,11 @@
-# CC := /home/ngocanh/Desktop/make/toolchain/usr/bin/arm-buildroot-linux-gnueabi-gcc
-# LIB_PATH := /home/ngocanh/Desktop/make/toolchain/usr/lib
+# CC := /home/ngocanh/Desktop/make/toolchain/arm/usr/bin/arm-buildroot-linux-gnueabi-gcc
+# LIB_PATH := /home/ngocanh/Desktop/make/toolchain/arm/usr/lib
 
-CC := gcc  
-LIB_PATH := /usr/lib
+CC := /home/ngocanh/Desktop/make/toolchain/misp/output/host/usr/bin/mips-buildroot-linux-uclibc-gcc
+LIB_PATH := /home/ngocanh/Desktop/make/toolchain/misp/output/host/usr/lib
+
+# CC := gcc  
+# LIB_PATH := /usr/lib
 
 # Name of the file to be generated
 NAME_PROJECT := fork

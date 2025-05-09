@@ -173,7 +173,7 @@ static error_t wan_infor_get_name_key(cJSON *json_input, char *name)
     cJSON *name_key = cJSON_GetObjectItem(json_input, "name");
     if (name_key != NULL && cJSON_IsString(name_key))
     {
-        snprintf(name, MAX_STR_LEN, "%s", name_key->valuestring);
+        SAFE_SNPRINTF(name, MAX_STR_LEN, "%s", name_key->valuestring);
         return ERROR_NONE;
     }
     else
@@ -191,7 +191,7 @@ static error_t wan_infor_get_gateway_type_key(cJSON *json_input, wan_gateway_t *
         int i;
         for (i = 0; i < GW_SIZE; i++)
         {
-            if (strcmp(gateway_type_key->valuestring, valid_gateway_type[i]) == 0)
+            if (SAFE_STRCMP(gateway_type_key->valuestring, valid_gateway_type[i]) == 0)
             {
                 *gateway_type = (wan_gateway_t)i;
                 return ERROR_NONE;
@@ -215,7 +215,7 @@ static error_t wan_infor_get_vlan_key(cJSON *json_input, wan_vlan_t *vlan)
         int i;
         for (i = 0; i < VLAN_SIZE; i++)
         {
-            if (strcmp(vlan_type->valuestring, valid_vlan_type[i]) == 0)
+            if (SAFE_STRCMP(vlan_type->valuestring, valid_vlan_type[i]) == 0)
             {
                 vlan->type = (wan_vlan_type_t)i;
                 break;
@@ -286,7 +286,7 @@ static error_t wan_infor_get_link_mode_key(cJSON *json_input, wan_linkmode_t *li
         int i;
         for (i = 0; i < LINK_SIZE; i++)
         {
-            if (strcmp(link_mode_key->valuestring, valid_link_mode[i]) == 0)
+            if (SAFE_STRCMP(link_mode_key->valuestring, valid_link_mode[i]) == 0)
             {
                 *link_mode = (wan_linkmode_t)i;
                 return ERROR_NONE;
@@ -307,7 +307,7 @@ static error_t wan_infor_get_pppoe_key(cJSON *json_input, wan_pppoe_t *pppoe)
     cJSON *pppoe_key = cJSON_GetObjectItem(json_input, "pppoe_username");
     if (pppoe_key != NULL && cJSON_IsString(pppoe_key))
     {
-        snprintf(pppoe->username, sizeof(pppoe->username), "%s", pppoe_key->valuestring);
+        SAFE_SNPRINTF(pppoe->username, sizeof(pppoe->username), "%s", pppoe_key->valuestring);
     }
     else
     {
@@ -318,7 +318,7 @@ static error_t wan_infor_get_pppoe_key(cJSON *json_input, wan_pppoe_t *pppoe)
     cJSON *pppoe_password_key = cJSON_GetObjectItem(json_input, "pppoe_password");
     if (pppoe_password_key != NULL && cJSON_IsString(pppoe_password_key))
     {
-        snprintf(pppoe->password, sizeof(pppoe->password), "%s", pppoe_password_key->valuestring);
+        SAFE_SNPRINTF(pppoe->password, sizeof(pppoe->password), "%s", pppoe_password_key->valuestring);
     }
     else
     {
@@ -336,7 +336,7 @@ static error_t wan_infor_get_ipv4_key(cJSON *json_input, wan_ipv4_t *ipv4)
         int i;
         for (i = 0; i < IPV4_SIZE; i++)
         {
-            if (strcmp(ipv4_alloc_key->valuestring, valid_ipv4_alloc[i]) == 0)
+            if (SAFE_STRCMP(ipv4_alloc_key->valuestring, valid_ipv4_alloc[i]) == 0)
             {
                 ipv4->alloc = (wan_ipv4_alloc_t)i;
                 break;
@@ -359,7 +359,7 @@ static error_t wan_infor_get_ipv4_key(cJSON *json_input, wan_ipv4_t *ipv4)
         if (ip != NULL && cJSON_IsString(ip) && is_valid_ipv4(ip->valuestring) == ERROR_NONE)
         {
 
-            snprintf(ipv4->ip, sizeof(ipv4->ip), "%s", ip->valuestring);
+            SAFE_SNPRINTF(ipv4->ip, sizeof(ipv4->ip), "%s", ip->valuestring);
         }
         else
         {
@@ -370,7 +370,7 @@ static error_t wan_infor_get_ipv4_key(cJSON *json_input, wan_ipv4_t *ipv4)
         cJSON *mask = cJSON_GetObjectItem(json_input, "ipv4_mask");
         if (mask != NULL && cJSON_IsString(mask) && is_valid_ipv4(mask->valuestring) == ERROR_NONE)
         {
-            snprintf(ipv4->mask, sizeof(ipv4->mask), "%s", mask->valuestring);
+            SAFE_SNPRINTF(ipv4->mask, sizeof(ipv4->mask), "%s", mask->valuestring);
         }
         else
         {
@@ -381,7 +381,7 @@ static error_t wan_infor_get_ipv4_key(cJSON *json_input, wan_ipv4_t *ipv4)
         cJSON *gw = cJSON_GetObjectItem(json_input, "ipv4_gw");
         if (gw != NULL && cJSON_IsString(gw) && is_valid_ipv4(gw->valuestring) == ERROR_NONE)
         {
-            snprintf(ipv4->gw, sizeof(ipv4->gw), "%s", gw->valuestring);
+            SAFE_SNPRINTF(ipv4->gw, sizeof(ipv4->gw), "%s", gw->valuestring);
         }
         else
         {
@@ -399,7 +399,7 @@ static error_t wan_infor_get_ipv4_key(cJSON *json_input, wan_ipv4_t *ipv4)
                 cJSON *dns_item = cJSON_GetArrayItem(dns, i);
                 if (cJSON_IsString(dns_item) && is_valid_ipv4(dns_item->valuestring) == ERROR_NONE)
                 {
-                    snprintf(ipv4->dns[i], sizeof(ipv4->dns[i]), "%s", dns_item->valuestring);
+                    SAFE_SNPRINTF(ipv4->dns[i], sizeof(ipv4->dns[i]), "%s", dns_item->valuestring);
                     ipv4->dns_count++;
                 }
                 else
@@ -413,10 +413,10 @@ static error_t wan_infor_get_ipv4_key(cJSON *json_input, wan_ipv4_t *ipv4)
     else
     {
         ipv4->dns_count = 0;
-        memset(ipv4->ip, 0, sizeof(ipv4->ip));
-        memset(ipv4->mask, 0, sizeof(ipv4->mask));
-        memset(ipv4->gw, 0, sizeof(ipv4->gw));
-        memset(ipv4->dns, 0, sizeof(ipv4->dns));
+        SAFE_MEMSET(ipv4->ip, 0, sizeof(ipv4->ip));
+        SAFE_MEMSET(ipv4->mask, 0, sizeof(ipv4->mask));
+        SAFE_MEMSET(ipv4->gw, 0, sizeof(ipv4->gw));
+        SAFE_MEMSET(ipv4->dns, 0, sizeof(ipv4->dns));
     }
     return ERROR_NONE;
 }
@@ -429,7 +429,7 @@ static error_t wan_infor_get_ipv6_key(cJSON *json_input, wan_ipv6_t *ipv6)
         int i;
         for (i = 0; i < IPV6_SIZE; i++)
         {
-            if (strcmp(ipv6_alloc_key->valuestring, valid_ipv6_alloc[i]) == 0)
+            if (SAFE_STRCMP(ipv6_alloc_key->valuestring, valid_ipv6_alloc[i]) == 0)
             {
                 ipv6->alloc = (wan_ipv6_alloc_t)i;
                 break;
@@ -451,7 +451,7 @@ static error_t wan_infor_get_ipv6_key(cJSON *json_input, wan_ipv6_t *ipv6)
         cJSON *gw = cJSON_GetObjectItem(json_input, "ipv6_gw");
         if (gw != NULL && cJSON_IsString(gw) && is_valid_ipv6(gw->valuestring) == ERROR_NONE)
         {
-            snprintf(ipv6->gw, sizeof(ipv6->gw), "%s", gw->valuestring);
+            SAFE_SNPRINTF(ipv6->gw, sizeof(ipv6->gw), "%s", gw->valuestring);
         }
         else
         {
@@ -462,8 +462,8 @@ static error_t wan_infor_get_ipv6_key(cJSON *json_input, wan_ipv6_t *ipv6)
     else
     {
         ipv6->dns_count = 0;
-        memset(ipv6->gw, 0, sizeof(ipv6->gw));
-        memset(ipv6->dns, 0, sizeof(ipv6->dns));
+        SAFE_MEMSET(ipv6->gw, 0, sizeof(ipv6->gw));
+        SAFE_MEMSET(ipv6->dns, 0, sizeof(ipv6->dns));
     }
     cJSON *prefix = cJSON_GetObjectItem(json_input, "ipv6_prefix_mode");
     if (prefix != NULL && cJSON_IsString(prefix))
@@ -471,7 +471,7 @@ static error_t wan_infor_get_ipv6_key(cJSON *json_input, wan_ipv6_t *ipv6)
         int i;
         for (i = 0; i < PREFIX_SIZE; i++)
         {
-            if (strcmp(prefix->valuestring, valid_prefix_mode[i]) == 0)
+            if (SAFE_STRCMP(prefix->valuestring, valid_prefix_mode[i]) == 0)
             {
                 ipv6->prefix.prefix_mode = (wan_prefix_mode_t)i;
                 break;
@@ -493,7 +493,7 @@ static error_t wan_infor_get_ipv6_key(cJSON *json_input, wan_ipv6_t *ipv6)
         cJSON *prefix_value = cJSON_GetObjectItem(json_input, "ipv6_prefix_value");
         if (prefix_value != NULL && cJSON_IsString(prefix_value))
         {
-            snprintf(ipv6->prefix.prefix_value, sizeof(ipv6->prefix.prefix_value), "%s", prefix_value->valuestring);
+            SAFE_SNPRINTF(ipv6->prefix.prefix_value, sizeof(ipv6->prefix.prefix_value), "%s", prefix_value->valuestring);
         }
         else
         {
@@ -504,7 +504,7 @@ static error_t wan_infor_get_ipv6_key(cJSON *json_input, wan_ipv6_t *ipv6)
         cJSON *primary_time = cJSON_GetObjectItem(json_input, "ipv6_prefix_primaryTime");
         if (primary_time != NULL && cJSON_IsString(primary_time))
         {
-            snprintf(ipv6->prefix.primary_time, sizeof(ipv6->prefix.primary_time), "%s", primary_time->valuestring);
+            SAFE_SNPRINTF(ipv6->prefix.primary_time, sizeof(ipv6->prefix.primary_time), "%s", primary_time->valuestring);
         }
         else
         {
@@ -515,7 +515,7 @@ static error_t wan_infor_get_ipv6_key(cJSON *json_input, wan_ipv6_t *ipv6)
         cJSON *lease_time = cJSON_GetObjectItem(json_input, "ipv6_prefix_leaseTime");
         if (lease_time != NULL && cJSON_IsString(lease_time))
         {
-            snprintf(ipv6->prefix.lease_time, sizeof(ipv6->prefix.lease_time), "%s", lease_time->valuestring);
+            SAFE_SNPRINTF(ipv6->prefix.lease_time, sizeof(ipv6->prefix.lease_time), "%s", lease_time->valuestring);
         }
         else
         {
@@ -528,9 +528,9 @@ static error_t wan_infor_get_ipv6_key(cJSON *json_input, wan_ipv6_t *ipv6)
     }
     else
     {
-        memset(ipv6->prefix.prefix_value, 0, sizeof(ipv6->prefix.prefix_value));
-        memset(ipv6->prefix.primary_time, 0, sizeof(ipv6->prefix.primary_time));
-        memset(ipv6->prefix.lease_time, 0, sizeof(ipv6->prefix.lease_time));
+        SAFE_MEMSET(ipv6->prefix.prefix_value, 0, sizeof(ipv6->prefix.prefix_value));
+        SAFE_MEMSET(ipv6->prefix.primary_time, 0, sizeof(ipv6->prefix.primary_time));
+        SAFE_MEMSET(ipv6->prefix.lease_time, 0, sizeof(ipv6->prefix.lease_time));
     }
     return ERROR_NONE;
 }
@@ -543,7 +543,7 @@ static error_t wan_infor_get_protocol_key(cJSON *json_input, wan_protocol_t *pro
         int i;
         for (i = 0; i < PROTO_SIZE; i++)
         {
-            if (strcmp(protocol_key->valuestring, valid_protocol_type[i]) == 0)
+            if (SAFE_STRCMP(protocol_key->valuestring, valid_protocol_type[i]) == 0)
             {
                 *protocol = (wan_protocol_t)i;
                 return ERROR_NONE;
