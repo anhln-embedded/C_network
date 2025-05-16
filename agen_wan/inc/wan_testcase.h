@@ -3,6 +3,7 @@
 
 #include "wan_infor.h"
 
+
 typedef enum{
     WAN_ERROR_NONE = 0,
     WAN_ERROR_GET_IPV4,

@@ -1,8 +1,7 @@
-# CC := /home/ngocanh/Desktop/make/toolchain/arm/usr/bin/arm-buildroot-linux-gnueabi-gcc
-# LIB_PATH := /home/ngocanh/Desktop/make/toolchain/arm/usr/lib
 
-CC := /home/ngocanh/Desktop/make/toolchain/misp/output/host/usr/bin/mips-buildroot-linux-uclibc-gcc
-LIB_PATH := /home/ngocanh/Desktop/make/toolchain/misp/output/host/usr/lib
+export STAGING_DIR
+CC := /home/ngocanh/Desktop/toolchain-arm_cortex-a7_gcc-5.2.0_musl-1.1.16_eabi/bin/arm-openwrt-linux-muslgnueabi-gcc
+LIB_PATH := /home/ngocanh/Desktop/toolchain-arm_cortex-a7_gcc-5.2.0_musl-1.1.16_eabi/lib
 
 # CC := gcc  
 # LIB_PATH := /usr/lib
@@ -22,7 +21,7 @@ OBJ_FILES := $(patsubst $(SRC_DIRS)/%.c,$(PATH_OUTPUT)/%.o,$(SRC_FILES))
 
 
 CFLAGS := -I$(INC_DIRS)
-LDFLAGS := -lm
+LDFLAGS := -lm -luci
 
 all: $(PATH_OUTPUT)/${NAME_PROJECT}
 	@echo $(OBJ_FILES)
@@ -30,7 +29,7 @@ all: $(PATH_OUTPUT)/${NAME_PROJECT}
 $(PATH_OUTPUT)/${NAME_PROJECT}: $(OBJ_FILES)
 	@echo "Linking $@"
 	@mkdir -p $(PATH_OUTPUT)
-	LD_LIBRARY_PATH=$(LIB_PATH) $(CC) $^ -o $@  ${LDFLAGS} 
+	LDFLAGS=$(LIB_PATH) $(CC) $^ -o $@  ${LDFLAGS} 
 
 $(PATH_OUTPUT)/%.o: $(SRC_DIRS)/%.c $(INC_FILES)
 	@echo "Compiling $< to $@"

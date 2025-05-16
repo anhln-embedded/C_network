@@ -10,7 +10,7 @@ const char *log_level_names[] = {
     "NONE",
     "ERROR",
     "WARN",
-    "DEBUG"};
+    "DEBUG"};  
 
 #ifdef LOG_USE_COLOR
 
